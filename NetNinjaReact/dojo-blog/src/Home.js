@@ -5,31 +5,27 @@ import BlogList from './BlogList';
 export const Home = () => {
 
   const [blogs, setBlogs] = useState(null);
-
-  const [name, setName] = useState('lahiru');
-
-
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    fetch('http://localhost:8000/blogs')
-    .then(res=>{
-      return res.json();
-    })
-    .then(data=>{
-      setBlogs(data);
-    }
-    )
-  }, [name]);
+    setTimeout(() => {
+      fetch('http://localhost:8000/blogs')
+        .then(res => {
+          return res.json();
+        })
+        .then(data => {
+          setBlogs(data);
+          setIsLoading(false);
+        });
+    },1000);
+  }, []);
 
   return (
     <div className="home">
-      {blogs && <BlogList blogs={blogs} title="All Blogs"  />}
-      {/* <BlogList blogs={blogs.filter((blog) => blog.author === "Lahiru")} title="Lahiru's Blogs" handleDelete={handleDelete} /> */}
-      <button onClick={() => setName('udeshika')}>Change Name</button>
-      <p>{name}</p>
-    </div>
+      {isLoading && <div>Loading...</div>}
+      {blogs && <BlogList blogs={blogs} title="All Blogs" />}
+      </div>
   );
 }
-
 
 export default Home;
