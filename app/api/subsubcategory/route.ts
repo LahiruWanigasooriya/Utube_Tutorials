@@ -34,6 +34,8 @@ const createSuccessResponse = (data: any, status: number = 200) => {
 
 export async function GET(request: Request) {
   try {
+    console.log("GET /api/subsubcategory - Request started");
+    
     const { searchParams } = new URL(request.url);
 
     // Extract and validate query parameters
@@ -44,13 +46,18 @@ export async function GET(request: Request) {
     const sortBy = searchParams.get("sortBy") || "createdAt";
     const sortOrder = searchParams.get("sortOrder") as "desc" | "asc" | undefined;
 
+    console.log("GET /api/subsubcategory - Parameters:", { subsubcategoryId, page, limit, search, sortBy, sortOrder });
+
     if (subsubcategoryId) {
+      console.log("GET /api/subsubcategory - Fetching by ID:", subsubcategoryId);
       const subSubCategoryData = await getSubSubCategoryById(subsubcategoryId);
 
       if (!subSubCategoryData || subSubCategoryData.status === 404) {
+        console.log("GET /api/subsubcategory - Not found:", subsubcategoryId);
         return createErrorResponse("Subsubcategory not found", 404);
       }
 
+      console.log("GET /api/subsubcategory - Found by ID:", subsubcategoryId);
       return createSuccessResponse(subSubCategoryData);
     }
 
@@ -58,6 +65,8 @@ export async function GET(request: Request) {
     const validSortOrder: "desc" | "asc" | undefined =
       sortOrder === "desc" || sortOrder === "asc" ? sortOrder : undefined;
 
+    console.log("GET /api/subsubcategory - Fetching all with params:", { page, limit, search, sortBy, sortOrder: validSortOrder });
+    
     const subSubCategoryData = await getAllSubSubCategories({
       page,
       limit,
@@ -66,8 +75,11 @@ export async function GET(request: Request) {
       sortOrder: validSortOrder,
     });
 
+    console.log("GET /api/subsubcategory - Success:", subSubCategoryData.success);
     return createSuccessResponse(subSubCategoryData);
   } catch (error: unknown) {
+    console.error("GET /api/subsubcategory - Error:", error);
+    
     // Default error message
     let errorMessage = "Internal server error";
 
